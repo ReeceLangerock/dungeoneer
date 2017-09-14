@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - 6
+cache:
+  yarn: true
+  directories:
+    - node_modules
+script:
+  - npm run build
+  - npm test
+deploy:
+  provider: surge
+  project: ./build/
+  domain: dungeoneer-rl.surge.sh
+  skip_cleanup: true

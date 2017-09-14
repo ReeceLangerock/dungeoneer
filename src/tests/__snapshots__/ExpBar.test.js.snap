@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExpBar matches snapshot 1`] = `
+<div>
+  <styled.div>
+    <styled.div />
+  </styled.div>
+</div>
+`;

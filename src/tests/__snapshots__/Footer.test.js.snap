@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Footer matches snapshot 1`] = `
+<styled.div
+  className="Footer"
+>
+  © 
+  2017
+   
+  <a
+    href="http://reecelangerock.com"
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    Reece Langerock
+  </a>
+  <styled.i
+    aria-hidden="false"
+    className="fa fa-github"
+    onClick={[Function]}
+  />
+</styled.div>
+`;
