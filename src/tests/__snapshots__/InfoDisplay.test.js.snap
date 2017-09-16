@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoDisplay matches snapshot 1`] = `
+<styled.div>
+  <styled.h5>
+    weapon: 
+    knife
+  </styled.h5>
+  <styled.h5>
+    attack: 
+    7
+  </styled.h5>
+  <styled.h5>
+    level: 
+    0
+  </styled.h5>
+</styled.div>
+`;

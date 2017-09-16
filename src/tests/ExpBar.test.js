@@ -17,15 +17,19 @@ describe("ExpBar", () => {
 
   beforeEach(() => {
     props = {
-      currentHealth: 10,
-      maxHealth: 100
+      currentExp: 10,
+      neededExp: 100
     };
     component = mount(<ExpBar {...props} />);
   });
 
-  it("displays correct current and max health", () => {
-    expect(component.props().currentHealth).toEqual(10);
-    expect(component.props().maxHealth).toEqual(100);
+  it("contains correct number of div", () => {
+    expect(component.find('div').length).toEqual(3);
+  });
+
+  it("receives correct current and needed experience", () => {
+    expect(component.props().currentExp).toEqual(10);
+    expect(component.props().neededExp).toEqual(100);
   });
 
   it("matches snapshot", () => {

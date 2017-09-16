@@ -4,6 +4,9 @@ import { shallow, mount, find, render, simulate } from "enzyme";
 import enzymeSerializer from "enzyme-to-json/serializer";
 
 import { PlayerInfoContainer } from "./../components/PlayerInfoContainer";
+import { HealthDisplay } from "./../components/HealthDisplay";
+import { ExpBar } from "./../components/ExpBar";
+import { InfoDisplay } from "./../components/InfoDisplay";
 
 expect.addSnapshotSerializer(enzymeSerializer);
 describe("PlayerInfoContainer", () => {
@@ -25,10 +28,20 @@ describe("PlayerInfoContainer", () => {
     component = mount(<PlayerInfoContainer {...props} />);
   });
 
-  // it('displays correct generation count', () => {
-  //   expect(component.text()).toEqual('10')
-  // })
+  it('contains health display component', () => {
+    expect(component.find(HealthDisplay).length).toEqual(1)
+  })
 
+  it('contains exp bar component', () => {
+    expect(component.find(ExpBar).length).toEqual(1)
+  })
+  
+  it('contains infoDisplay component', () => {
+    expect(component.find(InfoDisplay).length).toEqual(1)
+  })
+
+ 
+  
   it('receives a correct props', () => {
     expect(component.props().level).toEqual(0)
     expect(component.props().dungeon).toEqual(0)

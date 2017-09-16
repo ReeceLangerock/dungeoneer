@@ -24,7 +24,11 @@ describe('HealthDisplay', () => {
     component = mount(<ExpBar {...props} />);
   });
 
-  it("displays correct current and max health", () => {
+  it("contains correct number of div", () => {
+    expect(component.find('div').length).toEqual(3);
+  });
+
+  it("receives correct current and max props", () => {
     expect(component.props().currentHealth).toEqual(10);
     expect(component.props().maxHealth).toEqual(100);
   });

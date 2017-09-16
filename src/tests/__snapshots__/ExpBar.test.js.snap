@@ -1,9 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ExpBar matches snapshot 1`] = `
-<div>
-  <styled.div>
-    <styled.div />
-  </styled.div>
-</div>
+<styled.div>
+  10
+   / 
+  100
+  <styled.div
+    healthPercentage={10}
+  />
+</styled.div>
 `;

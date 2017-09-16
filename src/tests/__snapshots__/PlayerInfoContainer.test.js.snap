@@ -1,3 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PlayerInfoContainer matches snapshot 1`] = `<div />`;
+exports[`PlayerInfoContainer matches snapshot 1`] = `
+<styled.div>
+  <HealthDisplay
+    currentHealth={50}
+    maxHealth={100}
+  />
+  <ExpBar
+    currentExp={30}
+    neededExp={100}
+  />
+  <InfoDisplay />
+</styled.div>
+`;
