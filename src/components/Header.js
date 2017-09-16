@@ -7,7 +7,7 @@ import styled from "styled-components";
 
 export class Header extends React.Component {
   render() {
-    return  <div/>;
+    return  <div>Dungeoneer</div>;
   }
 }
 export default Header;
