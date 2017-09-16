@@ -11,5 +11,5 @@ script:
 deploy:
   provider: surge
   project: ./build/
-  domain: dungeoneer-rl.surge.sh
+  domain: dungeoneer.surge.sh
   skip_cleanup: true
