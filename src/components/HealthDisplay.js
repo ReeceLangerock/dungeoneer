@@ -3,23 +3,24 @@ import styled from "styled-components";
 
 const CurrentHealthContainer = styled.div`
   position: absolute;
-  top: 0px;
-  width: ${props => props.healthPercentage}%;
+  bottom: 0px;
+  height: ${props => props.healthPercentage}%;
   z-index: -3;
-  background-color: green;
-  height: 100%;
+  background-color: red;
+  width: 100%;
 `;
 
 const MaxHealthContainer = styled.div`
-  font-size: 1rem;
+  font-size: 1.1rem;
 
-  padding: 2px 0px 2px 0px;
   position: relative;
   overflow: hidden;
-
-  width: 90%;
+  height: 125px;
+  width: 125px;
+  line-height: 125px;
+  font-weight: bold;
   border: 1px solid;
-  border-radius: 10px;
+  border-radius: 50%;
   margin: 0 auto;
 `;
 
