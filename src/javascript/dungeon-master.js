@@ -1,123 +1,222 @@
+// REFACTOR THIS TO USE MODULE PATTERN
+// -------------------------------------------------
+
 class DungeonMaster {
-  constructor() {
-    this.totalRooms = Math.floor(1 + Math.random() * 3);
-    this.dungeonHeight = 100;
-    this.dungeonWidth = 100;
+  constructor () {
+    this.totalRooms = Math.floor(25 + Math.random() * 3)
+    // this.totalRooms = 2
+    this.dungeonHeight = 100
+    this.dungeonWidth = 100
+    this.dungeon = []
+    this.rooms = []
   }
 
-  generateEmptyDungeon() {
-    let emptyDungeon = [];
-    let index = 0;
+  generateDungeon () {
+    let index = 0
     for (let i = 0; i < this.dungeonWidth; i++) {
-      emptyDungeon.push([]);
+      this.dungeon.push([])
       for (let j = 0; j < this.dungeonHeight; j++) {
-        let randomLife = false;
+        let randomLife = false
 
         // randomLife = Math.random() * 100 > 95 ? true : false;
 
-        let newDungeonTile = { row: i, col: j, index: index, on: randomLife };
-        emptyDungeon[i].push(randomLife);
+        // let newDungeonTile = { row: i, col: j, index: index, on: randomLife }
+        // this.dungeon[i].push(randomLife)
       }
     }
-    let rooms = this.generateRandomRooms();
+    this.generateRandomRooms()
 
-    for(let i = 0; i < rooms.length; i++){
-    this.fillInRooms(emptyDungeon, rooms[i]);
-
-    }
-    //  emptyDungeon[first.roomStart[0],[first.roomStart[1]].on = true;
-    return emptyDungeon;
+    //  dungeon[first.roomTopRow,[first.roomLeftCol].on = true;
+    console.log(this.rooms)
+    return this.dungeon
   }
 
-  generateRandomRooms() {
-    let rooms = [];
-    rooms[0] = this.generateFirstRoom();
-    while (rooms.length < this.totalRooms) {
-      let roomToBuildOffOf = Math.floor(Math.random() * rooms.length);
-      let generationResult = this.generateRemainingRooms(rooms[roomToBuildOffOf]);
-      if (generationResult !== "FAILED_GENERATION") {
-        rooms.push(generationResult);
-      }
-    }
-    return rooms;
-  }
+  generateRandomRooms () {
+    this.rooms[0] = this.generateFirstRoom()
+    this.fillInRoom(this.rooms[0])
 
-  fillInRooms(dungeon, roomToFill) {
-    console.log(roomToFill);
-    for (let i = roomToFill.roomStart[0]; i < roomToFill.roomEnd[0]; i++) {
-      for (let j = roomToFill.roomStart[1]; j < roomToFill.roomEnd[1]; j++) {
-        dungeon[i][j] = true;
+    while (this.rooms.length < this.totalRooms) {
+      let roomToBuildOffOf = Math.floor(Math.random() * this.rooms.length)
+      let generationResult = this.generateRemainingRooms(this.rooms[roomToBuildOffOf], roomToBuildOffOf)
+      if (generationResult !== 'FAILED_GENERATION') {
+        this.rooms.push(generationResult)
+        this.fillInRoom(generationResult)
+        this.connectRooms(generationResult)
       }
     }
   }
 
-  generateRemainingRooms(lastRoom) {
-    let validRoom = false;
-    let newRoom;
-    let roomStart = [];
-    let roomEnd = [];
-    let direction = Math.floor(Math.random() * 4);
+  fillInRoom (roomToFill) {
+    for (let j = roomToFill.roomTopRow; j < roomToFill.roomBottomRow; j++) {
+      for (let i = roomToFill.roomLeftCol; i < roomToFill.roomRightCol; i++) {
+        this.dungeon[i][j] = true
+      }
+    }
+  }
+
+  connectRooms (roomToConnect) {
+    let r = roomToConnect.connector[0]
+    let c = roomToConnect.connector[1]
+    if (r && c) {
+      this.dungeon[r][c] = true
+    }
+  }
+
+  updateRoomNeighbors (roomNumber, direction) {
+    this.rooms[roomNumber].neighbors[direction] = true
+  }
+
+  generateRemainingRooms (lastRoom, roomNumber) {
+    let validRoom = false
+    let newRoom
+    let index = 0
+    let north = false, east = false, south = false, west = false
+    let directions = ['north', 'east', 'south', 'west']
+    let direction
+
+    // !validRoom
+
     while (!validRoom) {
-      let roomHeight = Math.floor(3 + Math.random() * 4);
-      let roomWidth = Math.floor(3 + Math.random() * 4);
+      let connector = []
+      let roomTopRow, roomBottomRow, roomLeftCol, roomRightCol
 
-      let offsetWidth = Math.floor(Math.random() * roomWidth);
-      let offsetHeight = Math.floor(Math.random() * roomHeight);
+      direction = directions[Math.floor(Math.random() * directions.length)]
+      if (directions.length === 0) {
+        return 'FAILED_GENERATION'
+      }
+      let roomHeight = Math.floor(4 + Math.random() * 7)
+      let roomWidth = Math.floor(4 + Math.random() * 7)
+
+      let offsetWidth = 0 // Math.floor(Math.random() * roomWidth)
+      let offsetHeight = 0 // Math.floor(Math.random() * roomHeight)
 
       switch (direction) {
-        case 0:
-          // have to get max of roomstart and roomend coords
-          roomStart = [lastRoom.roomStart[0] + 2, lastRoom.roomStart[1] + offsetWidth];
-          roomEnd = [roomStart[0] - roomHeight, roomStart[1] + roomWidth];
+        case 'north': // New Room North
+          roomTopRow = lastRoom.roomTopRow - 1 - roomHeight
+          roomBottomRow = lastRoom.roomTopRow - 1
+          roomRightCol = lastRoom.roomLeftCol + roomWidth
+          roomLeftCol = lastRoom.roomLeftCol
+          this.updateRoomNeighbors(roomNumber, 'north')
+          south = true
+          let maxLeft = Math.max(lastRoom.roomLeftCol, roomLeftCol)
+          let minRight = Math.min(lastRoom.roomRightCol, roomRightCol)
+          connector = [Math.floor((maxLeft + minRight) / 2), roomBottomRow]
+          directions.splice(directions.indexOf('north'), 1)
+          break
+        case 'east':
+          roomTopRow = lastRoom.roomBottomRow - roomHeight
+          roomBottomRow = lastRoom.roomBottomRow
+          roomRightCol = lastRoom.roomRightCol + 1 + roomWidth
+          roomLeftCol = lastRoom.roomRightCol + 1
+          let maxTop = Math.max(lastRoom.roomTopRow, roomTopRow)
+          let minBottom = Math.min(lastRoom.roomBottomRow, roomBottomRow)
+          this.updateRoomNeighbors(roomNumber, 'east')
+          connector = [roomLeftCol - 1, Math.floor((maxTop + minBottom) / 2)]
+          west = true
 
-        case 1:
-          roomStart = [lastRoom.roomStart[0] - 2, lastRoom.roomStart[1] + offsetWidth];
-          roomEnd = [roomStart[0] + roomHeight, roomStart[1] + roomWidth];
+          directions.splice(directions.indexOf('east'), 1)
 
-        case 2:
-          roomStart = [lastRoom.roomStart[0] + offsetHeight, lastRoom.roomStart[1] + 2];
-          roomEnd = [roomStart[0] + roomHeight, roomStart[1] + roomWidth];
+          break
 
-        case 3:
-          roomStart = [lastRoom.roomStart[0] + offsetHeight, lastRoom.roomStart[1] - 2];
-          roomEnd = [roomStart[0] + roomHeight, roomStart[1] - roomWidth];
+        case 'south':
+          roomTopRow = lastRoom.roomBottomRow + 1
+          roomBottomRow = lastRoom.roomBottomRow + 1 + roomHeight
+          roomLeftCol = lastRoom.roomRightCol - roomWidth
+          roomRightCol = lastRoom.roomRightCol
+          connector = []
+          maxLeft = Math.max(lastRoom.roomLeftCol, roomLeftCol)
+          minRight = Math.min(lastRoom.roomRightCol, roomRightCol)
+          connector = [Math.floor((maxLeft + minRight) / 2), roomTopRow - 1]
+          directions.splice(directions.indexOf('south'), 1)
+
+          break
+
+        case 'west':
+          roomTopRow = lastRoom.roomTopRow
+          roomBottomRow = lastRoom.roomTopRow + roomHeight
+          roomRightCol = lastRoom.roomLeftCol - 1
+          roomLeftCol = lastRoom.roomLeftCol - 1 - roomWidth
+          connector = []
+          maxTop = Math.max(lastRoom.roomTopRow, roomTopRow)
+          minBottom = Math.min(lastRoom.roomBottomRow, roomBottomRow)
+          connector = [roomRightCol, Math.floor((maxTop + minBottom) / 2)]
+          directions.splice(directions.indexOf('west'), 1)
+          break
       }
-
       newRoom = {
         roomHeight,
         roomWidth,
-        roomStart,
-        roomEnd
-      };
-
-      if (roomStart[0] >= 0 && roomStart[0] <= this.dungeonHeight && roomStart[1] >= 0 && roomStart[1] <= this.dungeonWidth) {
-        validRoom = true;
+        roomTopRow,
+        roomBottomRow,
+        roomRightCol,
+        roomLeftCol,
+        connector,
+        neighbors: {
+          north,
+          east,
+          south,
+          west
+        }
       }
-    }
 
-    return newRoom;
+      if (roomLeftCol < 1 || roomRightCol > this.dungeonWidth - 1 || roomTopRow < 1 || roomBottomRow > this.dungeonHeight - 1) {
+        connector = []
+        continue
+      }
+      // check if all spaces are clear
+      var goodTiles = 0
+      for (let i = roomLeftCol; i < roomRightCol; i++) {
+        if (this.dungeon[i].slice(roomTopRow, roomBottomRow).every(tile => tile === false)) {
+          goodTiles++
+        }
+      }
+      if (roomWidth !== goodTiles) {
+        connector = []
+
+        continue
+      }
+
+      validRoom = true
+    }
+    if (validRoom) {
+      return newRoom
+    } else {
+      return 'FAILED_GENERATION'
+    }
   }
 
-  generateFirstRoom() {
-    let validRoom = false;
+  generateFirstRoom () {
+    let validRoom = false
 
     while (!validRoom) {
-      let roomHeight = Math.floor(3 + Math.random() * 4);
-      let roomWidth = Math.floor(3 + Math.random() * 4);
-      let roomStart = [Math.floor(1 + Math.random() * this.dungeonHeight), Math.floor(1 + Math.random() * this.dungeonWidth)];
-      let roomEnd = [roomStart[0] + roomHeight, roomStart[1] + roomWidth];
-      console.log(`The room is ${roomHeight} high and ${roomWidth} wide`);
-      console.log(`The room begins at ${roomStart} and ends at ${roomEnd}`);
-      if (roomStart[0] >= 0 && roomStart[0] <= this.dungeonHeight && roomStart[1] >= 0 && roomStart[1] <= this.dungeonWidth) {
-        validRoom = true;
+      let roomHeight = Math.floor(4 + Math.random() * 5)
+      let roomWidth = Math.floor(4 + Math.random() * 5)
+      let roomTopRow = Math.floor(40 + Math.random() * 20)
+      let roomBottomRow = roomTopRow + roomHeight
+      let roomLeftCol = Math.floor(40 + Math.random() * 20)
+      let roomRightCol = roomLeftCol + roomWidth
+      // console.log(`The room is ${roomHeight} high and ${roomWidth} wide`)
+      // console.log(`The room begins at ${roomTopRow} and ends at ${roomBottomRow}`)
+      // console.log(`The room begins at ${roomLeftCol} and ends at ${roomRightCol}`)
+
+      if (roomTopRow > 0 && roomBottomRow < this.dungeonHeight && roomLeftCol > 0 && roomRightCol < this.dungeonWidth) {
+        validRoom = true
         return {
           roomHeight,
           roomWidth,
-          roomStart,
-          roomEnd
-        };
+          roomTopRow,
+          roomBottomRow,
+          roomRightCol,
+          roomLeftCol,
+          neighbors: {
+            north: false,
+            east: false,
+            south: false,
+            west: false
+          }
+        }
       }
     }
   }
 }
-export default DungeonMaster;
+export default DungeonMaster
