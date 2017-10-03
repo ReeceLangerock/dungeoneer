@@ -1,13 +1,11 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react'
+import styled from 'styled-components'
 
-// const FooterStyled = styled.div``;
-
-// const I = styled.i``;
+const StyledHeader = styled.header``
 
 export class Header extends React.Component {
-  render() {
-    return  <div>Dungeoneer</div>;
+  render () {
+    return <StyledHeader>Dungeoneer</StyledHeader>
   }
 }
-export default Header;
+export default Header

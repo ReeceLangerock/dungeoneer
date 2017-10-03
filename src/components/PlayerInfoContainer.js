@@ -10,6 +10,8 @@ const Container = styled.div`
   align-items:flex-end;
   padding: 5px;
   border-top: 3px solid;
+  height: 150px;
+  margin-top: 20px;
 `;
 
 // const I = styled.i``;
