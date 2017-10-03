@@ -6,8 +6,7 @@ import enzymeSerializer from 'enzyme-to-json/serializer'
 import { Dungeon } from './../components/Dungeon'
 import { DungeonTile } from './../components/DungeonTile'
 
-
-expect.addSnapshotSerializer(enzymeSerializer);
+expect.addSnapshotSerializer(enzymeSerializer)
 describe('Dungeon', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div')
@@ -18,19 +17,13 @@ describe('Dungeon', () => {
   let props
 
   beforeEach(() => {
-    props = {
-    
-    }
+    props = {}
     component = shallow(<Dungeon {...props} />)
   })
 
   it('renders correct number of cells', () => {
-    expect(component.find(DungeonTile).length).toBe();
-    
+    expect(component.find(DungeonTile).length).toBe()
   })
-
-
-
 
   it('matches snapshot', () => {
     const comp = shallow(<Dungeon {...props} />)
