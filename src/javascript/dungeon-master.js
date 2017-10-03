@@ -3,31 +3,29 @@
 
 class DungeonMaster {
   constructor () {
-    this.totalRooms = Math.floor(25 + Math.random() * 3)
+    this.totalRooms = Math.floor(30 + Math.random() * 5)
     // this.totalRooms = 2
     this.dungeonHeight = 100
     this.dungeonWidth = 100
     this.dungeon = []
     this.rooms = []
+    this.filledTiles = []
   }
 
   generateDungeon () {
-    let index = 0
+    // let index = 0
     for (let i = 0; i < this.dungeonWidth; i++) {
       this.dungeon.push([])
       for (let j = 0; j < this.dungeonHeight; j++) {
-        let randomLife = false
-
-        // randomLife = Math.random() * 100 > 95 ? true : false;
-
-        // let newDungeonTile = { row: i, col: j, index: index, on: randomLife }
-        // this.dungeon[i].push(randomLife)
+        
       }
     }
     this.generateRandomRooms()
 
     //  dungeon[first.roomTopRow,[first.roomLeftCol].on = true;
-    console.log(this.rooms)
+    this.placeEnemies()
+    this.placeWeapon()
+    this.placePortal()
     return this.dungeon
   }
 
@@ -62,6 +60,100 @@ class DungeonMaster {
     }
   }
 
+  placePlayer () {
+    let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
+    let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
+    let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
+
+    this.filledTiles.push({
+      entity: 'player',
+      x: xCoord,
+      y: yCoord
+    })
+    return [xCoord, yCoord]
+  }
+
+  placeEnemies () {
+    let numEnemies = 5
+    while (numEnemies) {
+      let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
+      let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
+      let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
+
+      for (let i = 0; i < this.filledTiles.length; i++) {
+        if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y == yCoord) {
+          continue
+        }
+      }
+      this.dungeon[xCoord][yCoord] = {
+        entity: 'enemy',
+        x: xCoord,
+        y: yCoord
+      }
+
+      this.filledTiles.push({
+        entity: 'enemy',
+        x: xCoord,
+        y: yCoord
+      })
+      numEnemies--
+    }
+   
+  }
+
+  placeWeapon() {
+    let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
+    let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
+    let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
+
+    for (let i = 0; i < this.filledTiles.length; i++) {
+      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y == yCoord) {
+        continue
+      }
+    }
+    this.dungeon[xCoord][yCoord] = {
+      entity: 'weapon',
+      weaponName: "",
+      weaponDamage: "",
+      x: xCoord,
+      y: yCoord
+    }
+
+    this.filledTiles.push({
+      entity: 'weapon',
+      weaponName: "",
+      weaponDamage: "",
+      x: xCoord,
+      y: yCoord
+    })
+
+  }
+
+  placePortal() {
+
+    let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
+    let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
+    let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
+
+    for (let i = 0; i < this.filledTiles.length; i++) {
+      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y == yCoord) {
+        continue
+      }
+    }
+    this.dungeon[xCoord][yCoord] = {
+      entity: 'portal',
+      x: xCoord,
+      y: yCoord
+    }
+
+    this.filledTiles.push({
+      entity: 'portal',
+      x: xCoord,
+      y: yCoord
+    })
+
+  }
+
   updateRoomNeighbors (roomNumber, direction) {
     this.rooms[roomNumber].neighbors[direction] = true
   }
@@ -69,7 +161,6 @@ class DungeonMaster {
   generateRemainingRooms (lastRoom, roomNumber) {
     let validRoom = false
     let newRoom
-    let index = 0
     let north = false, east = false, south = false, west = false
     let directions = ['north', 'east', 'south', 'west']
     let direction
@@ -86,9 +177,6 @@ class DungeonMaster {
       }
       let roomHeight = Math.floor(4 + Math.random() * 7)
       let roomWidth = Math.floor(4 + Math.random() * 7)
-
-      let offsetWidth = 0 // Math.floor(Math.random() * roomWidth)
-      let offsetHeight = 0 // Math.floor(Math.random() * roomHeight)
 
       switch (direction) {
         case 'north': // New Room North
@@ -142,6 +230,8 @@ class DungeonMaster {
           connector = [roomRightCol, Math.floor((maxTop + minBottom) / 2)]
           directions.splice(directions.indexOf('west'), 1)
           break
+        default:
+          return 'FAILED_GENERATION'
       }
       newRoom = {
         roomHeight,
@@ -195,9 +285,6 @@ class DungeonMaster {
       let roomBottomRow = roomTopRow + roomHeight
       let roomLeftCol = Math.floor(40 + Math.random() * 20)
       let roomRightCol = roomLeftCol + roomWidth
-      // console.log(`The room is ${roomHeight} high and ${roomWidth} wide`)
-      // console.log(`The room begins at ${roomTopRow} and ends at ${roomBottomRow}`)
-      // console.log(`The room begins at ${roomLeftCol} and ends at ${roomRightCol}`)
 
       if (roomTopRow > 0 && roomBottomRow < this.dungeonHeight && roomLeftCol > 0 && roomRightCol < this.dungeonWidth) {
         validRoom = true
