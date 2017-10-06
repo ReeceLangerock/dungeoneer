@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { connect } from 'react-redux'
+
 
 const CurrentHealthContainer = styled.div`
   position: absolute;
@@ -26,15 +28,19 @@ const MaxHealthContainer = styled.div`
 
 export class HealthDisplay extends React.Component {
   render() {
-    const healthPercentage = this.props.currentHealth / this.props.maxHealth * 100;
+    const healthPercentage = this.props.health / this.props.maxHealth * 100;
     return (
       <div>
         <MaxHealthContainer>
-          {this.props.currentHealth} / {this.props.maxHealth}
+          {this.props.health} / {this.props.maxHealth}
           <CurrentHealthContainer healthPercentage={healthPercentage} />
         </MaxHealthContainer>
       </div>
     );
   }
 }
-export default HealthDisplay;
+const mapStateToProps = state => ({
+  health: state.playerReducer.health,
+  maxHealth: state.playerReducer.maxHealth
+})
+export default connect(mapStateToProps, null)(HealthDisplay)

@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { connect } from 'react-redux'
 
 const CurrentHealthContainer = styled.div`
   position: absolute;
@@ -27,13 +28,18 @@ const MaxHealthContainer = styled.div`
 
 export class ExpBar extends React.Component {
   render() {
-    const expPercentage = this.props.currentExp / this.props.neededExp * 100;
+    const expPercentage = this.props.exp / this.props.expNeeded * 100;
     return (
       <MaxHealthContainer>
-        {this.props.currentExp} / {this.props.neededExp}
+        {this.props.exp} / {this.props.expNeeded}
         <CurrentHealthContainer healthPercentage={expPercentage} />
       </MaxHealthContainer>
     );
   }
 }
-export default ExpBar;
+const mapStateToProps = state => ({
+  exp: state.playerReducer.exp,
+  expNeeded:state.playerReducer.expNeeded,
+})
+export default connect(mapStateToProps, null)(ExpBar)
+

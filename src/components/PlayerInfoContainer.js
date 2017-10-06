@@ -12,6 +12,8 @@ const Container = styled.div`
   border-top: 3px solid;
   height: 150px;
   margin-top: 20px;
+  z-index: 5;
+  background: white;
 `;
 
 // const I = styled.i``;
@@ -20,8 +22,8 @@ export class PlayerInfoContainer extends React.Component {
   render() {
     return (
       <Container>
-        <HealthDisplay currentHealth={50} maxHealth={100} />
-        <ExpBar currentExp={30} neededExp={100}/>
+        <HealthDisplay/>
+        <ExpBar/>
         <InfoDisplay />
       </Container>
     );

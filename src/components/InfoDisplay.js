@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { connect } from 'react-redux'
 
 const TextContainer = styled.div`
   border: 1px solid;
   padding: 3px;
+  min-width: 150px;
   height: 120px;
 `;
 
@@ -19,10 +21,15 @@ export class InfoDisplay extends React.Component {
     return (
       <TextContainer>
         <InfoText>weapon: {this.props.weapon}</InfoText>
-        <InfoText>attack: {this.props.attack}</InfoText>
+        <InfoText>attack: {this.props.weaponDamage}</InfoText>
         <InfoText>level: {this.props.level}</InfoText>
       </TextContainer>
     );
   }
 }
-export default InfoDisplay;
+const mapStateToProps = state => ({
+  weapon: state.playerReducer.weapon,
+  weaponDamage:state.playerReducer.weaponDamage,
+  level: state.playerReducer.level
+})
+export default connect(mapStateToProps, null)(InfoDisplay)
