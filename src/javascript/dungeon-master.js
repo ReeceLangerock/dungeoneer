@@ -1,15 +1,18 @@
 // REFACTOR THIS TO USE MODULE PATTERN
 // -------------------------------------------------
+import entities from './dungeonEntities.json'
 
 class DungeonMaster {
-  constructor () {
+  constructor (dungeonLevel = 0) {
     this.totalRooms = Math.floor(30 + Math.random() * 5)
     // this.totalRooms = 2
     this.dungeonHeight = 100
+    this.dungeonLevel = dungeonLevel
     this.dungeonWidth = 100
     this.dungeon = []
     this.rooms = []
     this.filledTiles = []
+    this.dungeonReady
   }
 
   generateDungeon () {
@@ -17,15 +20,20 @@ class DungeonMaster {
     for (let i = 0; i < this.dungeonWidth; i++) {
       this.dungeon.push([])
       for (let j = 0; j < this.dungeonHeight; j++) {
-        
+        this.dungeon[i][j] = {
+          entity: 'wall'
+        }
       }
     }
     this.generateRandomRooms()
+    console.log('place')
 
     //  dungeon[first.roomTopRow,[first.roomLeftCol].on = true;
+    this.placeHealth()
     this.placeEnemies()
     this.placeWeapon()
     this.placePortal()
+    this.dungeonReady = true
     return this.dungeon
   }
 
@@ -47,7 +55,9 @@ class DungeonMaster {
   fillInRoom (roomToFill) {
     for (let j = roomToFill.roomTopRow; j < roomToFill.roomBottomRow; j++) {
       for (let i = roomToFill.roomLeftCol; i < roomToFill.roomRightCol; i++) {
-        this.dungeon[i][j] = true
+        this.dungeon[i][j] = {
+          entity: 'floor'
+        }
       }
     }
   }
@@ -56,7 +66,9 @@ class DungeonMaster {
     let r = roomToConnect.connector[0]
     let c = roomToConnect.connector[1]
     if (r && c) {
-      this.dungeon[r][c] = true
+      this.dungeon[r][c] = {
+        entity: 'floor'
+      }
     }
   }
 
@@ -70,6 +82,7 @@ class DungeonMaster {
       x: xCoord,
       y: yCoord
     })
+
     return [xCoord, yCoord]
   }
 
@@ -87,6 +100,8 @@ class DungeonMaster {
       }
       this.dungeon[xCoord][yCoord] = {
         entity: 'enemy',
+        health: 10,
+        damage: 5,
         x: xCoord,
         y: yCoord
       }
@@ -98,10 +113,39 @@ class DungeonMaster {
       })
       numEnemies--
     }
-   
   }
 
-  placeWeapon() {
+  placeHealth () {
+    let numHealth = 3
+    while (numHealth) {
+    let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
+    let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
+    let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
+
+    for (let i = 0; i < this.filledTiles.length; i++) {
+      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y == yCoord) {
+        continue
+      }
+    }
+    this.dungeon[xCoord][yCoord] = {
+      entity: 'health',
+      health: 15 * (this.dungeonLevel + 1),
+      x: xCoord,
+      y: yCoord
+    }
+
+    this.filledTiles.push({
+      entity: 'health',
+
+      health: 20 * (this.dungeonLevel + 1),
+      x: xCoord,
+      y: yCoord
+    })
+    numHealth--
+  }
+  }
+
+  placeWeapon () {
     let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
     let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
     let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
@@ -113,24 +157,22 @@ class DungeonMaster {
     }
     this.dungeon[xCoord][yCoord] = {
       entity: 'weapon',
-      weaponName: "",
-      weaponDamage: "",
+      weaponName: entities.weapons.dungeonZero[0],
+      weaponDamage: 5,
       x: xCoord,
       y: yCoord
     }
 
     this.filledTiles.push({
       entity: 'weapon',
-      weaponName: "",
-      weaponDamage: "",
+      weaponName: entities.weapons.dungeonZero[0],
+      weaponDamage: 5,
       x: xCoord,
       y: yCoord
     })
-
   }
 
-  placePortal() {
-
+  placePortal () {
     let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
     let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
     let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
@@ -151,7 +193,6 @@ class DungeonMaster {
       x: xCoord,
       y: yCoord
     })
-
   }
 
   updateRoomNeighbors (roomNumber, direction) {
@@ -175,8 +216,8 @@ class DungeonMaster {
       if (directions.length === 0) {
         return 'FAILED_GENERATION'
       }
-      let roomHeight = Math.floor(4 + Math.random() * 7)
-      let roomWidth = Math.floor(4 + Math.random() * 7)
+      let roomHeight = Math.floor(4 + Math.random() * 10)
+      let roomWidth = Math.floor(4 + Math.random() * 10)
 
       switch (direction) {
         case 'north': // New Room North
@@ -256,7 +297,7 @@ class DungeonMaster {
       // check if all spaces are clear
       var goodTiles = 0
       for (let i = roomLeftCol; i < roomRightCol; i++) {
-        if (this.dungeon[i].slice(roomTopRow, roomBottomRow).every(tile => tile === false)) {
+        if (this.dungeon[i].slice(roomTopRow, roomBottomRow).every(tile => tile.entity === 'wall')) {
           goodTiles++
         }
       }

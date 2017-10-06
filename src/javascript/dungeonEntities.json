@@ -1,0 +1,17 @@
+{
+    "weapons": {
+        "dungeonZero": [
+            "Gladius",
+            "Short Bow",
+            "Quarterstaff"
+        ],
+        "dungeonTwo": [
+            "Scimitar",
+            "Recurve Bow",
+            "Pole Axe"
+        ]
+    },
+    "enemies": {
+
+    }
+}
