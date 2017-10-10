@@ -1,17 +1,6 @@
 {
-    "weapons": {
-        "dungeonZero": [
-            "Gladius",
-            "Short Bow",
-            "Quarterstaff"
-        ],
-        "dungeonTwo": [
-            "Scimitar",
-            "Recurve Bow",
-            "Pole Axe"
-        ]
-    },
-    "enemies": {
-
-    }
+  "weapons": [
+    ["Gladius", "Short Bow", "Quarterstaff"],
+    ["Scimitar", "Recurve Bow", "Pole Axe"]
+  ]
 }
