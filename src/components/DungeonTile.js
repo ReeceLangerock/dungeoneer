@@ -6,7 +6,7 @@ const Tile = styled.div`
   height: 12px;
   font-size: 7px;
   z-index: ${props => {
-    if (props.entity && props.entity.entity === 'floor') {
+    if (props.entity && props.entity === 'floor') {
     } else {
       return 5
     }
@@ -15,17 +15,17 @@ const Tile = styled.div`
     if (props.player) {
       return 'blue'
     }
-
-    if (props.entity.entity === 'enemy') {
+    
+    if (props.entity && props.entity === 'enemy') {
       return 'red'
-    } else if (props.entity.entity === 'weapon') {
+    } else if (props.entity === 'weapon') {
       return 'yellow'
-    } else if (props.entity.entity === 'portal') {
+    } else if (props.entity === 'portal') {
       return 'purple'
     }
-    else if (props.entity.entity === 'health') {
+    else if (props.entity === 'health') {
       return 'green'
-    } else if (props.entity.entity === 'floor') {
+    } else if (props.entity === 'floor') {
       return 'white'
     } else {
       return 'grey'
@@ -35,7 +35,7 @@ const Tile = styled.div`
 
 export class DungeonTile extends React.Component {
   shouldComponentUpdate (nextProps) {
-    return this.props.player !== nextProps.player || this.props.entity.entity !== nextProps.entity.entity
+    return this.props.player !== nextProps.player || this.props.entity !== nextProps.entity
   }
   render () {
     return <Tile id={this.props.index} player={this.props.player} entity={this.props.entity} />
