@@ -1,6 +1,10 @@
 {
   "weapons": [
     ["Gladius", "Short Bow", "Quarterstaff"],
-    ["Scimitar", "Recurve Bow", "Pole Axe"]
+    ["Scimitar", "Recurve Bow", "Pole Axe"],
+    ["Claymore", "Siege Bow", "Halberd"],
+    ["Diamond Sword", "Composite Bow","Battle Hache"],
+    ["Diamond Sword", "Composite Bow","Battle Hache"]
+    
   ]
 }

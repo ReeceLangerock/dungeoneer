@@ -4,12 +4,13 @@ import entities from './dungeonEntities.json'
 
 class DungeonMaster {
   constructor (dungeonLevel = 0) {
-    this.totalRooms = Math.floor(30 + Math.random() * 5)
+    this.totalRooms = Math.floor(10 + Math.random() * 5)
     // this.totalRooms = 2
     this.dungeonHeight = 100
     this.dungeonLevel = dungeonLevel
     this.dungeonWidth = 100
     this.dungeon = []
+    this.boss = {}
     this.rooms = []
     this.filledTiles = []
     this.dungeonReady = false
@@ -20,6 +21,8 @@ class DungeonMaster {
   }
   generateDungeon () {
     return new Promise((resolve, reject) => {
+      console.log(this.dungeonLevel)
+
       for (let i = 0; i < this.dungeonWidth; i++) {
         this.dungeon.push([])
         for (let j = 0; j < this.dungeonHeight; j++) {
@@ -29,13 +32,12 @@ class DungeonMaster {
         }
       }
       this.generateRandomRooms()
-      if (this.dungeonLevel !== 3) {
+      if (this.dungeonLevel !== 4) {
         this.placePortal()
       } else {
         this.placeBoss()
       }
-      this.placeBoss()
-      
+
       this.placeHealth()
       this.placeWeapon()
       this.placeEnemies()
@@ -79,6 +81,10 @@ class DungeonMaster {
     }
   }
 
+  getBoss () {
+    return this.boss
+  }
+
   placePlayer () {
     let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
     let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
@@ -93,32 +99,71 @@ class DungeonMaster {
   }
 
   placeBoss () {
-    let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
-
-    let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
-    let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
-
-
-    for (let i = 0; i < this.filledTiles.length; i++) {
-      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y === yCoord) {
-        continue
+    let bossPlaced = false
+    let index = 0
+    let xCoord, yCoord, randomRoom
+    while (!bossPlaced) {
+      if (index === 50) {
+        return
       }
-    }
+      randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
 
+      xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
+      yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
+      console.log(this.filledTiles)
+      for (let i = 0; i < this.filledTiles.length; i++) {
+        if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y === yCoord) {
+          continue
+        }
+        if (this.filledTiles[i].x === xCoord + 1 && this.filledTiles[i].y === yCoord) {
+          continue
+        }
+        if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y + 1 === yCoord) {
+          continue
+        }
+        if (this.filledTiles[i].x === xCoord + 1 && this.filledTiles[i].y + 1 === yCoord) {
+          continue
+        }
+      }
+      bossPlaced = true
+
+      index = index + 1
+    }
     this.dungeon[xCoord][yCoord] = {
-      entity: 'boss',
-      health: (this.dungeonLevel + 1) * 15,
-      damage: (this.dungeonLevel + 1) * 5,
-      exp: (this.dungeonLevel + 1) * 20,
-      x: xCoord,
-      y: yCoord
+      entity: 'boss'
+    }
+    this.dungeon[xCoord + 1][yCoord] = {
+      entity: 'boss'
+    }
+    this.dungeon[xCoord][yCoord + 1] = {
+      entity: 'boss'
+    }
+    this.dungeon[xCoord + 1][yCoord + 1] = {
+      entity: 'boss'
     }
 
     this.filledTiles.push({
-      entity: 'boss',
       x: xCoord,
       y: yCoord
     })
+    this.filledTiles.push({
+      x: xCoord + 1,
+      y: yCoord
+    })
+    this.filledTiles.push({
+      x: xCoord,
+      y: yCoord + 1
+    })
+    this.filledTiles.push({
+      x: xCoord + 1,
+      y: yCoord + 1
+    })
+
+    this.boss = {
+      entity: 'boss',
+      health: Math.floor(Math.random() * 20) + 200,
+      damage: Math.floor(Math.random() * 5) + 30
+    }
   }
   placeEnemies () {
     let numEnemies = 5
@@ -134,15 +179,14 @@ class DungeonMaster {
       }
       this.dungeon[xCoord][yCoord] = {
         entity: 'enemy',
-        health: (this.dungeonLevel + 1) * 15,
-        damage: (this.dungeonLevel + 1) * 5,
-        exp: (this.dungeonLevel + 1) * 20,
+        health: Math.floor(Math.random() * 5) + (this.dungeonLevel + 1) * 15,
+        damage: Math.floor(Math.random() * 3) + (this.dungeonLevel + 1) * 6,
+        exp: Math.floor(Math.random() * 10) + (this.dungeonLevel + 2) * 15,
         x: xCoord,
         y: yCoord
       }
 
       this.filledTiles.push({
-        entity: 'enemy',
         x: xCoord,
         y: yCoord
       })
@@ -151,7 +195,7 @@ class DungeonMaster {
   }
 
   placeHealth () {
-    let numHealth = 3
+    let numHealth = 4
     while (numHealth) {
       let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
       let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
@@ -164,15 +208,12 @@ class DungeonMaster {
       }
       this.dungeon[xCoord][yCoord] = {
         entity: 'health',
-        health: 15 * (this.dungeonLevel + 1),
+        health: 20,
         x: xCoord,
         y: yCoord
       }
 
       this.filledTiles.push({
-        entity: 'health',
-
-        health: 20 * (this.dungeonLevel + 1),
         x: xCoord,
         y: yCoord
       })
@@ -194,14 +235,13 @@ class DungeonMaster {
 
     this.dungeon[xCoord][yCoord] = {
       entity: 'weapon',
-      weaponName: entities.weapons[0][randomWeapon],
+      weaponName: entities.weapons[this.dungeonLevel][randomWeapon],
       weaponDamage: Math.floor(5 + Math.random() * 3) * (this.dungeonLevel + 1),
       x: xCoord,
       y: yCoord
     }
 
     this.filledTiles.push({
-      entity: 'weapon',
       x: xCoord,
       y: yCoord
     })
@@ -224,7 +264,6 @@ class DungeonMaster {
     }
 
     this.filledTiles.push({
-      entity: 'portal',
       x: xCoord,
       y: yCoord
     })
