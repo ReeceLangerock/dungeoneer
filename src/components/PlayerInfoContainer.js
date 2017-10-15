@@ -8,12 +8,14 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items:flex-end;
-  padding: 5px;
-  border-top: 3px solid;
+  padding: 5px 10px;
   height: 150px;
-  margin-top: 20px;
+  font-family: 'OptimusPrinceps';
+    
   z-index: 5;
-  background: white;
+  // background: white;
+  background: #191919;
+  
 `;
 
 // const I = styled.i``;

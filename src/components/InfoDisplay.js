@@ -4,25 +4,29 @@ import { connect } from 'react-redux'
 
 const TextContainer = styled.div`
   border: 1px solid;
-  padding: 3px;
-  min-width: 150px;
-  height: 120px;
+  padding: 5px;
+  min-width: 200px;
+  height: 125px;
+  background: #EAEAEA;
 `;
 
 const InfoText = styled.h5`
   margin: 5px 0px 5px 0px;
   text-align: left;
   font-weight: normal;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  color: #7f1517;
+  word-wrap: nowrap;
 `;
 
 export class InfoDisplay extends React.Component {
   render() {
     return (
       <TextContainer>
-        <InfoText>weapon: {this.props.weapon}</InfoText>
-        <InfoText>attack: {this.props.weaponDamage}</InfoText>
-        <InfoText>level: {this.props.level}</InfoText>
+        <InfoText><b>WEAPON: </b> {this.props.weapon}</InfoText>
+        <InfoText><b>ATTACK: </b> {this.props.weaponDamage}</InfoText>
+        <InfoText><b>LEVEL: </b>{this.props.level}</InfoText>
+        <InfoText><b>ENEMIES SLAIN: </b>{this.props.enemiesSlain}</InfoText>
       </TextContainer>
     );
   }
@@ -30,6 +34,7 @@ export class InfoDisplay extends React.Component {
 const mapStateToProps = state => ({
   weapon: state.playerReducer.weapon,
   weaponDamage:state.playerReducer.weaponDamage,
-  level: state.playerReducer.level
+  level: state.playerReducer.level,
+  enemiesSlain: state.dungeonReducer.enemiesSlain
 })
 export default connect(mapStateToProps, null)(InfoDisplay)
