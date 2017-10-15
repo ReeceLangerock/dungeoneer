@@ -1,9 +1,11 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { injectGlobal } from 'styled-components'
+
 import DungeonTile from './DungeonTile'
 import DungeonMaster from './../javascript/dungeon-master.js'
 import { connect } from 'react-redux'
 import * as actions from './../redux/actions/actions'
+import GameMessage from './GameMessage'
 
 const DungeonContainer = styled.div`
   width: 960px;
@@ -13,19 +15,28 @@ const DungeonContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
 `
+
 export class Dungeon extends React.Component {
   constructor (props) {
     super(props)
     this.handleKeyDown = this.handleKeyDown.bind(this)
     this.state = {
       dungeon: false,
-      dungeonLevel: 0,
       lightsOut: false
     }
   }
 
   // INITIALIZE DUNGEONS
   componentWillMount () {
+    this.initialize()
+  }
+  componentWillReceiveProps (newProps) {
+    console.log(newProps.gameStatus)
+    if (newProps.gameStatus === 'init') {
+      this.initialize()
+    }
+  }
+  initialize () {
     const dungeonMaster = new DungeonMaster()
     dungeonMaster
       .generateDungeon()
@@ -43,6 +54,8 @@ export class Dungeon extends React.Component {
         this.prepareNext(1)
         this.prepareNext(2)
         this.prepareNext(3)
+        this.prepareNext(4)
+        this.props.updateGameStatus('active')
       })
   }
 
@@ -52,9 +65,12 @@ export class Dungeon extends React.Component {
 
     dungeonMaster.generateDungeon().then(response => {
       let newStart = dungeonMaster.placePlayer()
+      let boss = next ? dungeonMaster.getBoss() : 'none'
+
       this.setState({
         [`dungeon${next}`]: response,
-        [`startingPosition${next}`]: newStart
+        [`startingPosition${next}`]: newStart,
+        boss: boss
       })
     })
   }
@@ -101,7 +117,11 @@ export class Dungeon extends React.Component {
         })
         break
       case 'enemy':
+      case 'boss':
         // if combat doesn;t result in player killing enemy, return from handleMove without doing anything
+        if (whosThere.entity === 'boss') {
+          whosThere = this.state.boss
+        }
         if (!this.handleCombat(whosThere, newPosition)) {
           return
         }
@@ -114,7 +134,6 @@ export class Dungeon extends React.Component {
         break
       case 'health':
         this.handleHealthPickup(whosThere, newPosition)
-
         break
 
       case 'portal':
@@ -138,14 +157,25 @@ export class Dungeon extends React.Component {
 
     if (enemy.health > playerAttack) {
       if (enemyAttack > this.props.health) {
-        console.log('ded')
+        this.props.updateGameStatus('dead')
         return false
       }
-      this.state.dungeon[enemyLoc[0]][enemyLoc[1]].health = this.state.dungeon[enemyLoc[0]][enemyLoc[1]].health - playerAttack
+      if (enemy.entity === 'boss') {
+        enemy.health = enemy.health - playerAttack
+        this.setState({
+          boss: enemy
+        })
+      } else {
+        this.state.dungeon[enemyLoc[0]][enemyLoc[1]].health = this.state.dungeon[enemyLoc[0]][enemyLoc[1]].health - playerAttack
+      }
       this.props.removeHealth(enemyAttack)
     } else if (playerAttack >= enemy.health) {
-      let expGained = (this.props.level + 1) * enemy.exp
+      if (enemy.entity === 'boss') {
+        this.handleGameOver('victory')
+      }
+      let expGained = enemy.exp
       this.props.gainExp(expGained)
+      this.props.enemySlain()
       this.state.dungeon[enemyLoc[0]][enemyLoc[1]] = {
         entity: 'floor'
       }
@@ -155,7 +185,6 @@ export class Dungeon extends React.Component {
   }
 
   handleWeapon (weapon, weaponLoc) {
-    ;``
     this.state.dungeon[weaponLoc[0]][weaponLoc[1]] = {
       entity: 'floor'
     }
@@ -163,20 +192,19 @@ export class Dungeon extends React.Component {
   }
 
   handlePortal () {
-    let dungeonLevel = this.state.dungeonLevel + 1
-    if (dungeonLevel < 4) {
+    let dungeonLevel = this.props.dungeonLevel + 1
+    if (dungeonLevel < 5) {
       let newStart = this.state[`startingPosition${dungeonLevel}`]
       this.setState(
         {
           dungeon: this.state[`dungeon${dungeonLevel}`],
-          playerPosition: newStart,
-          dungeonLevel
+          playerPosition: newStart
         },
         this.centerCamera(newStart)
       )
+      this.props.updateDungeonLevel(dungeonLevel)
     } else {
       // handle game over
-      console.log('over')
     }
   }
 
@@ -187,6 +215,10 @@ export class Dungeon extends React.Component {
     this.props.addHealth(health.health)
   }
 
+  handleGameOver (status) {
+    this.props.updateDungeonLevel(1)
+    this.props.updateGameStatus(status)
+  }
   findEntityAtNewPosition (newPosition) {
     if (typeof this.state.dungeon[newPosition[0]][newPosition[1]] === 'object') {
       return this.state.dungeon[newPosition[0]][newPosition[1]]
@@ -237,27 +269,22 @@ export class Dungeon extends React.Component {
   }
 
   centerCamera (newStart) {
-    console.log(newStart)
     let firstVisibleRow = newStart[0] - 23 > 0 ? newStart[0] - 23 : 0
     let LastVisibleRow = newStart[0] + 23 < 100 ? newStart[0] + 23 : 100
     let firstVisibleColumn = newStart[1] - 40 > 0 ? newStart[1] - 40 : 0
     let lastVisibleColumn = firstVisibleColumn + 80
-    console.log(firstVisibleColumn)
-    this.setState(
-      {
-        firstVisibleRow: firstVisibleRow,
-        lastVisibleRow: LastVisibleRow,
-        firstVisibleColumn: firstVisibleColumn,
-        lastVisibleColumn
-      },
-      console.log(this.state.firstVisibleColumn)
-    )
+    this.setState({
+      firstVisibleRow: firstVisibleRow,
+      lastVisibleRow: LastVisibleRow,
+      firstVisibleColumn: firstVisibleColumn,
+      lastVisibleColumn
+    })
   }
 
   // RENDERING
 
   renderDungeonTiles () {
-    if (this.state.dungeon) {
+    if (this.state.dungeon && this.props.gameStatus === 'active') {
       let tiles = []
       let index = 0
       let player = false
@@ -266,7 +293,8 @@ export class Dungeon extends React.Component {
       const sight = 8
       for (let r = this.state.firstVisibleRow; r < this.state.lastVisibleRow; r++) {
         for (let c = this.state.firstVisibleColumn; c < this.state.lastVisibleColumn; c++) {
-          if (this.state.lightsOut) {
+          // if lights are false, then create darkness
+          if (!this.props.lights) {
             const xDiff = Math.abs(this.state.playerPosition[0] - r)
             const yDiff = Math.abs(this.state.playerPosition[1] - c)
 
@@ -285,8 +313,12 @@ export class Dungeon extends React.Component {
       }
 
       return tiles
+    } else if (this.props.gameStatus === 'dead') {
+      return <GameMessage message='You Died' />
+    } else if (this.props.gameStatus === 'victory') {
+      return <GameMessage message='Victory!' />
     } else {
-      return <h1>Loading... </h1>
+      return <GameMessage message='Loading...' />
     }
   }
   render () {
@@ -302,6 +334,10 @@ export class Dungeon extends React.Component {
 const mapStateToProps = state => ({
   weapon: state.playerReducer.weapon,
   weaponDamage: state.playerReducer.weaponDamage,
-  level: state.playerReducer.level
+  level: state.playerReducer.level,
+  health: state.playerReducer.health,
+  lights: state.dungeonReducer.lights,
+  currentDungeonLevel: state.dungeonReducer.currentDungeonLevel,
+  gameStatus: state.dungeonReducer.gameStatus
 })
 export default connect(mapStateToProps, actions)(Dungeon)
