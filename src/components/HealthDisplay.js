@@ -7,9 +7,10 @@ const CurrentHealthContainer = styled.div`
   position: absolute;
   bottom: 0px;
   height: ${props => props.healthPercentage}%;
-  z-index: -3;
-  background-color: red;
-  width: 100%;
+  z-index: 1;
+  background-color: #7f1517;
+  
+  width: 110%;
 `;
 
 const MaxHealthContainer = styled.div`
@@ -17,14 +18,22 @@ const MaxHealthContainer = styled.div`
 
   position: relative;
   overflow: hidden;
-  height: 125px;
-  width: 125px;
-  line-height: 125px;
+  height: 150px;
+  width: 150px;
+  line-height: 150px;
   font-weight: bold;
-  border: 1px solid;
+  border: 2px solid #510E0F;
   border-radius: 50%;
   margin: 0 auto;
+  background: #EAEAEA;
+  box-sizing: border-box;
 `;
+
+const Text = styled.div`
+position: relative;
+z-index: 3;
+
+`
 
 export class HealthDisplay extends React.Component {
   render() {
@@ -32,8 +41,8 @@ export class HealthDisplay extends React.Component {
     return (
       <div>
         <MaxHealthContainer>
-          {this.props.health} / {this.props.maxHealth}
           <CurrentHealthContainer healthPercentage={healthPercentage} />
+          <Text>{this.props.health} / {this.props.maxHealth}</Text>
         </MaxHealthContainer>
       </div>
     );

@@ -6,8 +6,8 @@ const CurrentHealthContainer = styled.div`
   position: absolute;
   top: 0px;
   width: ${props => props.healthPercentage}%;
-  z-index: -3;
-  background-color: yellow;
+  z-index: 1;
+  background-color: #B9A938;
   height: 100%;
 `;
 
@@ -19,19 +19,28 @@ const MaxHealthContainer = styled.div`
   overflow: hidden;
   height: 25px;
   width: 100%;
-  border: 1px solid;
+  border: 2px solid #8B7E2A;
   border-radius: 10px;
   margin: 0px 5px 0px 5px;
   line-height: 25px;
+  background: #EAEAEA;
+  
   
 `;
+
+const Text = styled.div`
+position: relative;
+z-index: 3;
+font-size:1.25rem;
+
+`
 
 export class ExpBar extends React.Component {
   render() {
     const expPercentage = this.props.exp / this.props.expNeeded * 100;
     return (
       <MaxHealthContainer>
-        {this.props.exp} / {this.props.expNeeded}
+       <Text> {this.props.exp} / {this.props.expNeeded} </Text>
         <CurrentHealthContainer healthPercentage={expPercentage} />
       </MaxHealthContainer>
     );
