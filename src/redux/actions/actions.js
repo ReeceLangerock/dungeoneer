@@ -28,12 +28,19 @@ export var gainExp = exp => {
 export var enemySlain = () => {
   return {
     type: 'ENEMY_SLAIN'
+
   }
 }
 
 export var toggleLights = () => {
   return {
     type: 'TOGGLE_LIGHTS'
+  }
+}
+
+export var toggleInfo = () => {
+  return {
+    type: 'TOGGLE_INFO'
   }
 }
 
@@ -44,11 +51,16 @@ export var updateGameStatus = status => {
   }
 }
 
-
 export var updateDungeonLevel = (level) => {
   return {
     type: 'UPDATE_DUNGEON_LEVEL',
     level
 
+  }
+}
+
+export var resetGame = () => {
+  return {
+    type: 'RESET_GAME'
   }
 }

@@ -1,16 +1,15 @@
-export var playerReducer = (
-  state = {
-    position: [],
-    health: 100,
-    maxHealth: 100,
-    weapon: 'Dagger',
-    weaponDamage: 500,
-    exp: 0,
-    expNeeded: 100,
-    level: 1
-  },
-  action
-) => {
+const baseState = {
+  position: [],
+  health: 100,
+  maxHealth: 100,
+  weapon: 'Dagger',
+  weaponDamage: 5,
+  exp: 0,
+  expNeeded: 100,
+  level: 1
+}
+
+export var playerReducer = (state = baseState, action) => {
   switch (action.type) {
     case 'ADD_HEALTH':
       let newHealth = action.health + state.health
@@ -27,7 +26,7 @@ export var playerReducer = (
       if (newExp >= state.expNeeded) {
         newExpNeeded = state.expNeeded + 100
         newExp = newExp - state.expNeeded
-        newWeaponDamage = newWeaponDamage + 5
+        newWeaponDamage = newWeaponDamage + 2
         newLevel++
       }
 
@@ -36,7 +35,7 @@ export var playerReducer = (
         exp: newExp,
         expNeeded: newExpNeeded,
         level: newLevel,
-        weaponDamage: newWeaponDamage 
+        weaponDamage: newWeaponDamage
       }
     case 'EQUIP_NEW_WEAPON':
       return {
@@ -44,6 +43,9 @@ export var playerReducer = (
         weapon: action.weapon.weaponName,
         weaponDamage: state.weaponDamage + action.weapon.weaponDamage
       }
+    case 'RESET_GAME':
+      state = baseState
+      return { ...state }
 
     default:
       return state
@@ -53,21 +55,26 @@ export var playerReducer = (
 export var dungeonReducer = (
   state = {
     lights: false,
+    info: false,
     gameStatus: 'active',
-    currentDungeonLevel: 1,
+    currentDungeonLevel: 0,
     enemiesSlain: 0
   },
   action
 ) => {
   switch (action.type) {
-    case 'TOGGLE_LIGHTS':
+    case 'TOGGLE_INFO':
+      return { ...state, info: !state.info }
+      case 'TOGGLE_LIGHTS':
       return { ...state, lights: !state.lights }
     case 'UPDATE_STATUS':
       return { ...state, gameStatus: action.status }
-      case 'UPDATE_DUNGEON_LEVEL':
-      return { ...state, currentDungeonLevel: action.level}
+    case 'UPDATE_DUNGEON_LEVEL':
+      return { ...state, currentDungeonLevel: action.level }
     case 'ENEMY_SLAIN':
       return { ...state, enemiesSlain: state.enemiesSlain + 1 }
+    case 'RESET_GAME':
+      return { ...state, enemiesSlain: 0 }
 
     default:
       return state
