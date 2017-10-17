@@ -5,12 +5,11 @@ import enzymeSerializer from 'enzyme-to-json/serializer'
 
 import { HealthDisplay } from './../components/HealthDisplay'
 
-
-expect.addSnapshotSerializer(enzymeSerializer);
+expect.addSnapshotSerializer(enzymeSerializer)
 describe('HealthDisplay', () => {
   it('renders without crashing', () => {
     const div = document.createElement('div')
-    ReactDOM.render(<HealthDisplay  />, div)
+    ReactDOM.render(<HealthDisplay />, div)
   })
 
   let component
@@ -20,18 +19,18 @@ describe('HealthDisplay', () => {
     props = {
       currentHealth: 10,
       maxHealth: 100
-    };
-    component = mount(<ExpBar {...props} />);
-  });
+    }
+    component = mount(<ExpBar {...props} />)
+  })
 
-  it("contains correct number of div", () => {
-    expect(component.find('div').length).toEqual(3);
-  });
+  it('contains correct number of div', () => {
+    expect(component.find('div').length).toEqual(3)
+  })
 
-  it("receives correct current and max props", () => {
-    expect(component.props().currentHealth).toEqual(10);
-    expect(component.props().maxHealth).toEqual(100);
-  });
+  it('receives correct current and max props', () => {
+    expect(component.props().currentHealth).toEqual(10)
+    expect(component.props().maxHealth).toEqual(100)
+  })
 
   it('matches snapshot', () => {
     const comp = shallow(<HealthDisplay {...props} />)
