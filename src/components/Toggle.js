@@ -9,7 +9,7 @@ right: 15px;
 top: 10px;
 cursor: pointer;
 font-size: 40px;
-color: ${props => (props.lights ? 'yellow' : 'white')};`
+color: ${props => (props.lights ? '#B9A938' : 'white')};`
 
 export class Toggle extends React.Component {
   constructor (props) {
