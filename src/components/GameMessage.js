@@ -8,12 +8,12 @@ font-family: 'OptimusPrinceps';
 color: #7f1517;
 background: #191919;
 flex-grow: 1;
-height: 200px;
 display: flex;
 font-size: 5rem;
-justify-content: space-around;
+justify-content: center;
 flex-direction: column;
 align-items: center;
+z-index:10;
 transition: 1s all fade-in-out;
 `
 
