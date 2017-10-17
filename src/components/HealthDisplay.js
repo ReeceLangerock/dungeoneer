@@ -1,7 +1,6 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react'
+import styled from 'styled-components'
 import { connect } from 'react-redux'
-
 
 const CurrentHealthContainer = styled.div`
   position: absolute;
@@ -9,12 +8,13 @@ const CurrentHealthContainer = styled.div`
   height: ${props => props.healthPercentage}%;
   z-index: 1;
   background-color: #7f1517;
+  width: 100%;
+
   
-  width: 110%;
-`;
+`
 
 const MaxHealthContainer = styled.div`
-  font-size: 1.1rem;
+  font-size: 1.2rem;
 
   position: relative;
   overflow: hidden;
@@ -27,7 +27,12 @@ const MaxHealthContainer = styled.div`
   margin: 0 auto;
   background: #EAEAEA;
   box-sizing: border-box;
-`;
+  @media (max-width: 550px) { 
+    height: 75px;
+    width: 75px;
+    line-height: 75px;
+  }
+`
 
 const Text = styled.div`
 position: relative;
@@ -36,8 +41,8 @@ z-index: 3;
 `
 
 export class HealthDisplay extends React.Component {
-  render() {
-    const healthPercentage = this.props.health / this.props.maxHealth * 100;
+  render () {
+    const healthPercentage = this.props.health / this.props.maxHealth * 100
     return (
       <div>
         <MaxHealthContainer>
@@ -45,7 +50,7 @@ export class HealthDisplay extends React.Component {
           <Text>{this.props.health} / {this.props.maxHealth}</Text>
         </MaxHealthContainer>
       </div>
-    );
+    )
   }
 }
 const mapStateToProps = state => ({
