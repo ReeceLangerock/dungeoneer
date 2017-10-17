@@ -4,7 +4,7 @@ import entities from './dungeonEntities.json'
 
 class DungeonMaster {
   constructor (dungeonLevel = 0) {
-    this.totalRooms = Math.floor(10 + Math.random() * 5)
+    this.totalRooms = Math.floor(20 + Math.random() * 5)
     // this.totalRooms = 2
     this.dungeonHeight = 100
     this.dungeonLevel = dungeonLevel
@@ -21,8 +21,6 @@ class DungeonMaster {
   }
   generateDungeon () {
     return new Promise((resolve, reject) => {
-      console.log(this.dungeonLevel)
-
       for (let i = 0; i < this.dungeonWidth; i++) {
         this.dungeon.push([])
         for (let j = 0; j < this.dungeonHeight; j++) {
@@ -110,7 +108,6 @@ class DungeonMaster {
 
       xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
       yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
-      console.log(this.filledTiles)
       for (let i = 0; i < this.filledTiles.length; i++) {
         if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y === yCoord) {
           continue
@@ -179,9 +176,9 @@ class DungeonMaster {
       }
       this.dungeon[xCoord][yCoord] = {
         entity: 'enemy',
-        health: Math.floor(Math.random() * 5) + (this.dungeonLevel + 1) * 15,
+        health: Math.floor(Math.random() * 5) + (this.dungeonLevel + 1) * 16,
         damage: Math.floor(Math.random() * 3) + (this.dungeonLevel + 1) * 6,
-        exp: Math.floor(Math.random() * 10) + (this.dungeonLevel + 2) * 15,
+        exp: Math.floor(Math.random() * 10) + (this.dungeonLevel + 2) * 16,
         x: xCoord,
         y: yCoord
       }
@@ -195,14 +192,14 @@ class DungeonMaster {
   }
 
   placeHealth () {
-    let numHealth = 4
+    let numHealth = 5
     while (numHealth) {
       let randomRoom = this.rooms[Math.floor(Math.random() * this.rooms.length)]
       let xCoord = randomRoom.roomLeftCol + Math.floor(Math.random() * randomRoom.roomWidth)
       let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
 
       for (let i = 0; i < this.filledTiles.length; i++) {
-        if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y == yCoord) {
+        if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y === yCoord) {
           continue
         }
       }
@@ -227,7 +224,7 @@ class DungeonMaster {
     let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
 
     for (let i = 0; i < this.filledTiles.length; i++) {
-      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y == yCoord) {
+      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y === yCoord) {
         continue
       }
     }
@@ -253,7 +250,7 @@ class DungeonMaster {
     let yCoord = randomRoom.roomTopRow + Math.floor(Math.random() * randomRoom.roomHeight)
 
     for (let i = 0; i < this.filledTiles.length; i++) {
-      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y == yCoord) {
+      if (this.filledTiles[i].x === xCoord && this.filledTiles[i].y === yCoord) {
         continue
       }
     }
