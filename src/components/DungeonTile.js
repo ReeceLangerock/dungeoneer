@@ -12,28 +12,26 @@ const Tile = styled.div`
     }
   }};
   background: ${props => {
-    if(props.darkness) {
+    if (props.darkness) {
       return 'black'
     }
     if (props.player) {
-      return 'blue'
+      return '#0000BA'
     }
-    
+
     if (props.entity === 'enemy') {
-      return 'red'
+      return '#7f1517'
     } else if (props.entity === 'weapon') {
-      return 'yellow'
+      return '#B9A938'
     } else if (props.entity === 'portal') {
-      return 'purple'
-    }
-    else if (props.entity === 'health') {
-      return 'green'
+      return '#701C6F'
+    } else if (props.entity === 'health') {
+      return '#315C2B'
     } else if (props.entity === 'floor') {
       return 'white'
-    }
-   else if (props.entity === 'boss') {
-    return 'pink'
-  } else {
+    } else if (props.entity === 'boss') {
+      return '#681213'
+    } else {
       return 'grey'
     }
   }};
@@ -44,7 +42,7 @@ export class DungeonTile extends React.Component {
     return this.props.player !== nextProps.player || this.props.entity !== nextProps.entity || this.props.darkness !== nextProps.darkness
   }
   render () {
-    return <Tile id={this.props.index} darkness = {this.props.darkness} player={this.props.player} entity={this.props.entity} />
+    return <Tile id={this.props.index} darkness={this.props.darkness} player={this.props.player} entity={this.props.entity} />
   }
 }
 export default DungeonTile
